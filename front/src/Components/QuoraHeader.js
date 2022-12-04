@@ -13,10 +13,52 @@ import Modal from "react-responsive-modal";
 import { Avatar, Button, Input } from "@material-ui/core";
 import "react-responsive-modal/styles.css";
 import "./css/QuoraHeader.css";
+import axios from "axios";
+import {auth} from "./auth/firebase";
+import { signOut } from "firebase/auth";
+import { logout, selectUser } from "../feature/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 function QuoraHeader(){
     const [isModalOpen,SetIsModalOpen]=useState(false);
     const [inputUrl,SetInputUrl]=useState("");
-    const close=(<Close/>)
+    const [question,setQuestion]=useState("");
+    const close=(<Close/>);
+    const dispatch = useDispatch();
+    const user = useSelector(selectUser);
+    const handleSubmit=async ()=>{
+       console.log("Hello world");
+       if(question!==""){
+        const config={
+            headers:{
+                "Content-Type":"application/json"
+            }
+        }
+        const body={
+        user:user,
+       questionName:question,
+       questionUrl:inputUrl
+        }
+        await axios.post("/api/questions",body,config).then((res)=>{
+            console.log(res.data);
+            alert(res.data.message);
+        }).catch((e)=>{
+            console.log(e);
+            alert("Error in adding question");
+        })
+       }
+    }
+    const handleLogout=()=>{
+        if (window.confirm("Are you sure to logout ?")) {
+            signOut(auth)
+              .then(() => {
+                dispatch(logout());
+                console.log("Logged out");
+              })
+              .catch(() => {
+                console.log("error in logout");
+              });
+          }
+    }
     return(
         <div>
          <div className="qHeader">
@@ -36,7 +78,7 @@ function QuoraHeader(){
                     <input type="text" placeholder="Search Questions"/>
                 </div>
                 <div className="qHeader__Rem">
-                    <Avatar/>
+                  <span onClick={handleLogout}> <Avatar src={user?.photo} /></span> 
                 </div>
                 <Button onClick={()=> SetIsModalOpen(true)}>Add Question</Button>
                 <Modal open={isModalOpen} closeIcon={close} onClose={()=> SetIsModalOpen(false)} closeOnEsc center closeOnOverlayClick={false} styles={{overlay:{
@@ -56,7 +98,13 @@ function QuoraHeader(){
                         </div>
                     </div>
                     <div className="modal__field">
-                        <Input type="text" placeholder="Start your Question with What, How , Why"/>
+                        <Input
+                        onClick={handleSubmit}
+                        defaultValue={question}
+                        
+                        onChange={e=>setQuestion(e.target.value)}
+                        type="text" 
+                        placeholder="Start your Question with What, How , Why"/>
                         <div style={{
                             display:"flex",
                             flexDirection:"column"
@@ -87,7 +135,7 @@ function QuoraHeader(){
                     </div>
                     <div className="modal__buttons">
                     <button className="cancle" onClick={()=> SetIsModalOpen(false)}>Cancel</button>
-                        <button type="submit" className="add" >
+                        <button onClick={handleSubmit} type="submit" className="add" >
                             Add Question
                         </button>
                     </div>
