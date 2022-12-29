@@ -60,8 +60,8 @@ function Post(props){
     return(
         <div className="post">
 <div className="post__info">
-    <Avatar src={user?.photo}/>
-    <h4>{user?.userName}</h4>
+    <Avatar src={props?.user?.photo}/>
+    <h4>{props?.user?.userName}</h4>
     <small><LastSeen Date={props.time}/></small>
 </div>
 <div className="post__body">
