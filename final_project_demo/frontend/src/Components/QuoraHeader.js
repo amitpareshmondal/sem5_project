@@ -99,7 +99,7 @@ function QuoraHeader(){
                     </div>
                     <div className="modal__field">
                         <Input
-                        onClick={handleSubmit}
+                        // onClick={handleSubmit}
                         defaultValue={question}
                         
                         onChange={e=>setQuestion(e.target.value)}

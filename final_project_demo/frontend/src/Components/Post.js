@@ -128,7 +128,7 @@ function Post(props){
          <span><LastSeen Date={_a.createdAt}/></span>
      </div>
  </div>
- <div className="post-answer">{ReactHtmlParser(_a.answer)} Hi</div>
+ <div className="post-answer">{ReactHtmlParser(_a.answer)} </div>
 </div>
 </div>
 </>
